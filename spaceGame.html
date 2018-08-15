@@ -1,0 +1,228 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+    <title> Космос </title>
+    
+    <link href="js/jquery-ui.min.css" rel="stylesheet" >
+    <style>
+        body{
+       background-image: url(images/space3.png) ;
+            background-position: center center;
+          
+        }
+        
+        #playerShip{
+            position: absolute;
+            top: 80%;
+            left:45%;
+        }
+        
+        #resultPanel{
+           position:absolute;  
+            height: 5%;
+            
+            background: rgb(0,0,200) no-repeat ;
+            left:0;
+            top:0;
+            
+            z-index: 101;
+            width: 100%;
+        }
+      
+    </style>
+
+    <script src="http://code.jquery.com/jquery-3.3.1.min.js"> </script>
+    <script src="js/jquery-ui.min.js"> </script>
+    <script>
+        $(document).ready(function(){
+            
+           $(document).keypress(function(evt) {
+               if(String.fromCharCode(evt.which)==="a"||String.fromCharCode(evt.which)==="ф"){
+            var leftPos =  $('#playerShip').css('left');
+            leftPos = Number(parseInt(leftPos));
+               leftPos-=20;
+               leftPos+='px';
+              $('#playerShip').css('left',leftPos); 
+           }
+           });
+           //конец click (движение влево)
+        
+        
+                 
+           $(document).keypress(function(evt) {
+                if(String.fromCharCode(evt.which)==="d"||String.fromCharCode(evt.which)==="в"){
+            var leftPos =  $('#playerShip').css('left');
+            leftPos = Number(parseInt(leftPos));
+               leftPos+=20;
+               leftPos+='px';
+              $('#playerShip').css('left',leftPos); 
+                }
+           }) ;//конец click (движение вправо)
+            
+            
+            $(document).keypress(function(evt) {
+                if(String.fromCharCode(evt.which)==="w"||String.fromCharCode(evt.which)==="ц"){
+                $('#playerShip img').attr('src','images/flyRocket.png');
+            }
+                else if(String.fromCharCode(evt.which)==="s"||String.fromCharCode(evt.which)==="ы") 
+                     $('#playerShip img').attr('src','images/stopRocket.png');
+            });
+            
+            var classFrom="";
+            $(document).keypress(function(evt) {
+           
+                if(evt.which==32){
+                
+                var leftCoord = parseFloat($('#playerShip').css('left'))+20;
+                var valueRand = Math.floor(Math.random()*10000);
+                    
+                $("#fieldOfBattle").prepend('<img src="images/damageBall.png" id="firstDamage'+valueRand.toString() +'" height="50px" width="50px">');
+                    
+                     classFrom = '#firstDamage'+valueRand;
+                    $(classFrom).css({
+                        position:'absolute',
+                        left:(leftCoord.toString()+'px'),
+                        bottom:"18%",
+                        zIndex:"100"
+                    }).draggable(
+                        
+                    );
+                   
+                    
+                   var clearId = setInterval(function() {
+                            var bottomCoord = parseFloat( $(classFrom).css('bottom'));
+                            bottomCoord+=20;
+                            $(classFrom).css("bottom",bottomCoord.toString()+'px');
+                        if(bottomCoord>window.outerHeight){
+                            $(classFrom).remove();
+                               clearInterval(clearId);
+                        }
+                       var centerX= parseFloat($(classFrom).css("left"))+25;
+                       var centerY=parseFloat($(classFrom).css("bottom"))+25;
+                      var monsterX= parseFloat($(idMonster).css("left"));
+                       var monsterY=parseFloat($(idMonster).css("bottom"));
+                      
+                       
+                       if((centerX>monsterX&&centerX<(monsterX+60)&&(centerY>monsterY&&centerY<(monsterY+60)))){
+                          console.log("Попадание");
+                       $(idMonster).hide('explode');
+                       }
+                       
+                      },31);
+                    
+                    
+            }
+            });//конец keypress
+
+           
+            
+            
+            
+            
+            
+            function moveShell(elementForMove) {
+                var bottomCoord = parseFloat( elementForMove.css('bottom'));
+                bottomCoord+=20;
+                elementForMove.css("bottom",bottomCoord.toString()+'px');
+            }//общая формула анимации
+
+    
+         //-------------------------------------------------------------------------------------------------------------
+         //-------------------------------------------------------------------------------------------------------------    
+               
+        var person = {
+         name:"", 
+         health:0,
+          damage:0,
+            
+          sendDamage: function (opponent) {
+              opponent.health - this.damage;
+          },
+            
+            receiveDamage: function(opponent){
+                this.health - opponent.damage;
+            },
+            
+           
+         
+        isDead: function () {
+            if(this.health<=0)
+                return true;
+            return false;
+        }    
+        };//базовый класс
+        
+            
+        
+         //код , отвечающий за вражеских персонажей
+        
+        function Monster ( name, health, damage) {
+          this.name = name;
+            this.health = health;
+            this.damage = damage;
+            this.defaultImg = "";
+            this.scores = 0;
+        
+
+        }
+            Monster.prototype = person;
+       
+            purpleMonster = new Monster('purpleMonster',100,20,50);
+            purpleMonster.defaultImg = 'images/monstr11.png';
+            
+            
+            greenPlazma = new Monster('greenPlazma',200,50,100);
+            greenPlazma.defaultImg = "images/montr2.png";
+            
+            var randomMonster = [purpleMonster,greenPlazma];
+            
+            /* сделать функцию для отсчета времени появления монстров,
+            также рандом от ширины экрана
+            */
+            var randomTop = Math.random()*300;
+            randomTop+=40;
+            
+            
+            var randomLeft = Math.random()*window.outerWidth;
+            if(randomLeft+70>=window.outerWidth)
+                randomLeft-=70;
+            else if(randomLeft<=0)
+                randomLeft+=70;
+            
+            
+            var valueRand2 = Math.floor(Math.random()*10000);
+                    
+                $("#fieldOfBattle").prepend('<img src="images/monstr11.png" id="purpleMonster'+valueRand2.toString() +'" height="60px" width="60px">');
+                    
+                     var idMonster = '#purpleMonster'+valueRand2;
+                    $(idMonster).css({
+                        position:'absolute',
+                        left:(randomLeft.toString()+'px'),
+                        top:(randomTop.toString()+'px'),
+                        zIndex:"100"
+                    }).droppable();
+            
+                        
+                   
+            
+            
+            
+            
+            
+            
+        });//конец Ready
+    </script>
+  
+</head>
+<body>
+    <div id="fieldOfBattle">
+           <div id="resultPanel"></div>
+        
+       
+        <div id="playerShip"> 
+        <img src="images/stopRocket.png" height="100px" width="100px">
+        </div>
+    </div>
+</body>
+</html>
