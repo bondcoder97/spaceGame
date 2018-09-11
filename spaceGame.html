@@ -4,7 +4,7 @@
 <meta charset="utf-8">
     <title> Космос </title>
     
-    <link href="js/jquery-ui.min.css" rel="stylesheet" >
+    <link href="css/jquery-ui.min.css" rel="stylesheet" >
     <style>
         body{
        background-image: url(images/space3.png) ;
@@ -85,9 +85,7 @@
                         left:(leftCoord.toString()+'px'),
                         bottom:"18%",
                         zIndex:"100"
-                    }).draggable(
-                        
-                    );
+                    });
                    
                     
                    var clearId = setInterval(function() {
@@ -106,8 +104,20 @@
                        
                        if((centerX>monsterX&&centerX<(monsterX+60)&&(centerY>monsterY&&centerY<(monsterY+60)))){
                           console.log("Попадание");
+                           purpleMonster.receiveDamage(ship.damage);
+                           if(purpleMonster.isDead())
+                               {
                        $(idMonster).hide('explode');
+                           $(classFrom).remove();
+                            clearInterval(clearId);
+                               }
+                           else {
+                               $(classFrom).remove();
+                               clearInterval(clearId);
+                             }
                        }
+                       
+                       
                        
                       },31);
                     
@@ -117,7 +127,7 @@
 
            
             
-            
+         
             
             
             
@@ -140,17 +150,11 @@
               opponent.health - this.damage;
           },
             
-            receiveDamage: function(opponent){
-                this.health - opponent.damage;
-            },
+            receiveDamage: function(damage){
+                this.health -=  damage;
+            }
+        
             
-           
-         
-        isDead: function () {
-            if(this.health<=0)
-                return true;
-            return false;
-        }    
         };//базовый класс
         
             
@@ -162,24 +166,46 @@
             this.health = health;
             this.damage = damage;
             this.defaultImg = "";
-            this.scores = 0;
+            this.scoresFor = 0;
+            
+            
+          this.isDead = function () {
+            if(this.health<=0)
+                return true;
+            return false;
+        };
         
 
         }
             Monster.prototype = person;
        
-            purpleMonster = new Monster('purpleMonster',100,20,50);
+            purpleMonster = new Monster('purpleMonster',100,100,30);
             purpleMonster.defaultImg = 'images/monstr11.png';
+            purpleMonster.scoresFor = 10;
             
             
-            greenPlazma = new Monster('greenPlazma',200,50,100);
+            greenPlazma = new Monster('greenPlazma',200,150,50);
             greenPlazma.defaultImg = "images/montr2.png";
+            greenPlazma.scoresFor = 20;
+            
+            //корабль игрока
+            
+            var ship = new Monster("playerShip",300,50);
+            ship.scores = 0;
+            
+            
+            
             
             var randomMonster = [purpleMonster,greenPlazma];
             
             /* сделать функцию для отсчета времени появления монстров,
             также рандом от ширины экрана
             */
+            
+         
+            
+            var choosedMonster = randomMonster[Math.floor(Math.random()*2)];
+            
             var randomTop = Math.random()*300;
             randomTop+=40;
             
@@ -193,18 +219,20 @@
             
             var valueRand2 = Math.floor(Math.random()*10000);
                     
-                $("#fieldOfBattle").prepend('<img src="images/monstr11.png" id="purpleMonster'+valueRand2.toString() +'" height="60px" width="60px">');
+                $("#fieldOfBattle").prepend('<img src="'+choosedMonster.defaultImg+ '" id="'+choosedMonster.name +valueRand2.toString() +'" height="60px" width="60px">');
                     
-                     var idMonster = '#purpleMonster'+valueRand2;
+                     var idMonster = '#'+choosedMonster.name+valueRand2;
                     $(idMonster).css({
                         position:'absolute',
                         left:(randomLeft.toString()+'px'),
                         top:(randomTop.toString()+'px'),
                         zIndex:"100"
-                    }).droppable();
+                    });
             
                         
+               
                    
+    //добавил setInterval
             
             
             
