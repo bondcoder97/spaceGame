@@ -98,16 +98,27 @@
                         }
                        var centerX= parseFloat($(classFrom).css("left"))+25;
                        var centerY=parseFloat($(classFrom).css("bottom"))+25;
-                      var monsterX= parseFloat($(idMonster).css("left"));
-                       var monsterY=parseFloat($(idMonster).css("bottom"));
+                      
                       
                        
-                       if((centerX>monsterX&&centerX<(monsterX+60)&&(centerY>monsterY&&centerY<(monsterY+60)))){
-                          console.log("Попадание");
-                           purpleMonster.receiveDamage(ship.damage);
-                           if(purpleMonster.isDead())
+    var resultArray = allMonsters.filter(function(item){
+        var monsterX= parseFloat($(item.callName).css("left"));
+        var monsterY=parseFloat($(item.callName).css("bottom"));
+ if((centerX>monsterX&&centerX<(monsterX+60)&&(centerY>monsterY&&centerY<(monsterY+60))))
+         return item;
+ });//проверка на попадание
+
+
+                       
+                       
+                       if(resultArray.length!==0){
+                          console.log("Попадание");//
+                           
+                          resultArray.forEach(function(item) {
+                         item.receiveDamage(ship.damage);
+                        if(item.isDead())
                                {
-                       $(idMonster).hide('explode');
+                       $(item.callName).hide('explode');
                            $(classFrom).remove();
                             clearInterval(clearId);
                                }
@@ -115,7 +126,12 @@
                                $(classFrom).remove();
                                clearInterval(clearId);
                              }
-                       }
+                              
+                              
+                              
+                    });
+                        
+                       } //конец if для определения попадания
                        
                        
                        
@@ -127,7 +143,7 @@
 
            
             
-         
+            
             
             
             
@@ -167,6 +183,7 @@
             this.damage = damage;
             this.defaultImg = "";
             this.scoresFor = 0;
+            this.callName = "";
             
             
           this.isDead = function () {
@@ -194,7 +211,7 @@
             ship.scores = 0;
             
             
-            
+           
             
             var randomMonster = [purpleMonster,greenPlazma];
             
@@ -202,8 +219,9 @@
             также рандом от ширины экрана
             */
             
+            var allMonsters = [];
          
-            
+           
             var choosedMonster = randomMonster[Math.floor(Math.random()*2)];
             
             var randomTop = Math.random()*300;
@@ -222,6 +240,9 @@
                 $("#fieldOfBattle").prepend('<img src="'+choosedMonster.defaultImg+ '" id="'+choosedMonster.name +valueRand2.toString() +'" height="60px" width="60px">');
                     
                      var idMonster = '#'+choosedMonster.name+valueRand2;
+                    choosedMonster.callName = idMonster;
+                    allMonsters.push(choosedMonster);
+            
                     $(idMonster).css({
                         position:'absolute',
                         left:(randomLeft.toString()+'px'),
@@ -229,9 +250,8 @@
                         zIndex:"100"
                     });
             
-                        
-               
-                   
+             console.log(allMonsters);
+                
     //добавил setInterval
             
             
