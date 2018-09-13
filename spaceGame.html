@@ -101,15 +101,16 @@
                       
                       
                        
-    var resultArray = allMonsters.filter(function(item){
+    var resultArray = []; 
+        allMonsters.filter(function(item){
         var monsterX= parseFloat($(item.callName).css("left"));
         var monsterY=parseFloat($(item.callName).css("bottom"));
  if((centerX>monsterX&&centerX<(monsterX+60)&&(centerY>monsterY&&centerY<(monsterY+60))))
-         return item;
+         resultArray.push(item);
  });//проверка на попадание
 
 
-                       
+      
                        
                        if(resultArray.length!==0){
                           console.log("Попадание");//
@@ -118,6 +119,11 @@
                          item.receiveDamage(ship.damage);
                         if(item.isDead())
                                {
+                                   
+                        allMonsters=allMonsters.filter(function(newItem){
+                            if(newItem.callName!=item.callName)
+                                return newItem;
+                        });//очистка массива от убитых монстров
                        $(item.callName).hide('explode');
                            $(classFrom).remove();
                             clearInterval(clearId);
@@ -212,7 +218,7 @@
             
             
            
-            
+            //код, отвечающий за появление монстров
             var randomMonster = [purpleMonster,greenPlazma];
             
             /* сделать функцию для отсчета времени появления монстров,
@@ -221,6 +227,7 @@
             
             var allMonsters = [];
          
+            var idTimer = setInterval(function() {
            
             var choosedMonster = randomMonster[Math.floor(Math.random()*2)];
             
@@ -249,9 +256,9 @@
                         top:(randomTop.toString()+'px'),
                         zIndex:"100"
                     });
-            
-             console.log(allMonsters);
-                
+            console.log(allMonsters);
+           
+                },5000);
     //добавил setInterval
             
             
